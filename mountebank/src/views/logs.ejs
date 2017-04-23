@@ -1,0 +1,77 @@
+<%
+title = 'logs'
+description = 'Logs of the currently running mb process'
+
+function formatLogEntry (logEntry) {
+  return '<span><span class="' + logEntry.level + '">' + logEntry.level + '</span>: ' + logEntry.message + '</span>';
+}
+%>
+
+<% include _header %>
+
+<h1>Logs</h1>
+
+<div id='tail' class='down-arrow-icon button'> <span>Follow log</span></div>
+
+<pre id='logs'><code>
+<% logs.forEach(function (logEntry) { -%>
+<%- formatLogEntry(logEntry) %>
+<% }) -%>
+</code></pre>
+
+<script type='text/javascript'>
+  $(document).ready(function () {
+    var nextIndex = <%= logs.length %>,
+        intervalId,
+        topOfTail = $('#tail').position().top,
+        tailset = 5;
+
+    $(document).on('scroll', window, animateTail);
+
+    <%- formatLogEntry.toString() %>
+
+    function findTop () {
+      return $(window).scrollTop() >= topOfTail ? $(window).scrollTop() - topOfTail + tailset : 0;
+    }
+
+    function scrollToBottom () {
+      $('html, body').animate({ scrollTop: $(document).height() }, 200);
+      $('#tail').css('top', findTop());
+    }
+
+    function getLatestLogEntries () {
+      $.getJSON('/logs?startIndex=' + nextIndex, function (json) {
+        var logs = json.logs;
+        for (var i = 0; i < logs.length; i++) {
+          $('#logs code').append(formatLogEntry(logs[i]) + '\n');
+        }
+        nextIndex += json.logs.length;
+        scrollToBottom();
+      });
+    }
+
+    function animateTail() {
+      $('#tail').css('top', findTop());
+    }
+
+    $('#tail').click(function () {
+      var currentLeft = parseFloat($(this).css('left').replace('px', ''));
+
+      if (this.tailing) {
+        this.tailing = false;
+        $('#tail span').text('Follow log');
+        $(this).css('left', (currentLeft + 12) + 'px');
+        clearInterval(intervalId);
+      }
+      else {
+        this.tailing = true;
+        $('#tail span').text('Unfollow log');
+        $(this).css('left', (currentLeft - 12) + 'px');
+        intervalId = setInterval(getLatestLogEntries, 250);
+        scrollToBottom();
+      }
+    })
+  });
+</script>
+
+<% include _footer %>

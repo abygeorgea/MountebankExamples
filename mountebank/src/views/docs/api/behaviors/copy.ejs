@@ -1,0 +1,444 @@
+<table>
+  <tr>
+    <th>Parameter</th>
+    <th>Type</th>
+    <th>Description</th>
+  </tr>
+  <tr>
+    <td><code>copy</code></td>
+    <td>An array</td>
+    <td>A list of objects specifying the request field and response token, as well as a way
+    of selecting the value from the request field</td>
+  </tr>
+  <tr>
+    <td><code>copy[].from</code></td>
+    <td>A string or an object</td>
+    <td>The name of the request field to copy from, or, if the request field is an object,
+    then an object specifying the path to the request field. For example,
+    <pre><code>{ "from": "body" }</code></pre> and <pre><code>{ "from": { "query": "q" } }</code></pre>
+    are both valid.</td>
+  </tr>
+  <tr>
+    <td><code>copy[].into</code></td>
+    <td>A string</td>
+    <td>The token to replace in the response with the selected request value. There is
+    no need to specify which field in the response the token will be in; all response
+    tokens will be replaced in all response fields. Sometimes, the request selection
+    returns multiple values. In those cases, you can add an index to the token, while
+    the unindexed token represents the first match. For example, if you specify
+    <pre><code>{ "into": "${NAME}" }</code></pre> as your token configuration, then both
+    <code>${NAME}</code> and <code>${NAME}[0]</code> will be replaced by the first match,
+    <code>${NAME}[1]</code> will be replaced by the second match, and so on.</td>
+  </tr>
+  <tr>
+    <td><code>copy[].using</code></td>
+    <td>An object</td>
+    <td>The configuration needed to select values from the response</td>
+  </tr>
+  <tr>
+    <td><code>copy[].using.method</code></td>
+    <td>An string</td>
+    <td>The method used to select the value(s) from the request. Allowed values are <code>regex</code>,
+    <code>xpath</code>, and <code>jsonpath</code>.</td>
+  </tr>
+  <tr>
+    <td><code>copy[].using.selector</code></td>
+    <td>An string</td>
+    <td>The selector used to select the value(s) from the request. For a <code>regex</code>, this would
+    be the pattern, and the replacement value will be the entire match. Match groups using parentheses are supported
+    and can be replaced using indexed tokens as described in the <code>copy[].into</code> description.
+    <code>xpath</code> and <code>jsonpath</code> selectors work on XML and JSON documents. If the request
+    value does not match the selector (including through XML or JSON parsing errors), nothing is replaced.</td>
+  </tr>
+  <tr>
+    <td><code>copy[].using.ns</code></td>
+    <td>An object</td>
+    <td>For <code>xpath</code> selectors, the <code>ns</code> object maps namespace aliases to URLs</td>
+  </tr>
+  <tr>
+    <td><code>copy[].using.options</code></td>
+    <td>An object</td>
+    <td>For <code>regex</code> selectors, the <code>options</code> object describes the regular expression options</td>
+  </tr>
+  <tr>
+    <td><code>copy[].using.options.ignoreCase</code></td>
+    <td>A boolean</td>
+    <td>Uses a <a href='https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/RegExp/ignoreCase'>case-insensitive</a>
+    regular expression</td>
+  </tr>
+  <tr>
+    <td><code>copy[].using.options.multiline</code></td>
+    <td>A boolean</td>
+    <td>Uses a <a href='https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/RegExp/multiline'>multiline</a>
+    regular expression</td>
+  </tr>
+</table>
+
+<p>The <code>copy</code> behavior supports dynamically replacing values in the response with something that
+comes from the request. It relies on you adding tokens of your own choosing into the response fields you want
+replaced. We'll look at the following examples:</p>
+
+<ul class='bullet-list'>
+  <li><a href='#copy-regex-replacement'>Regular expressions</a></li>
+  <li><a href='#copy-xpath-replacement'>xpath</a></li>
+  <li><a href='#copy-jsonpath-replacement'>jsonpath</a></li>
+  <li><a href='#copy-indexed-replacement'>Using match groups and indexed replacements</a></li>
+</ul>
+
+<h3 id='copy-regex-replacement'>Regular expressions</h3>
+
+<p>The following example shows multiple regular expression matches on request fields to copy into the response.</p>
+
+<pre><code data-test-id='copy-regex'
+           data-test-step='1'
+           data-test-type='http'>
+POST /imposters HTTP/1.1
+Host: localhost:<%= port %>
+Accept: application/json
+Content-Type: application/json
+
+{
+  "port": 8585,
+  "protocol": "http",
+  "stubs": [
+    {
+      "responses": [
+        {
+          "is": {
+            "statusCode": "<strong class='highlight1'>${code}</strong>",
+            "headers": {
+              "X-Test": "<strong class='highlight2'>${header}</strong>"
+            },
+            "body": "The request name was <strong class='highlight3'>${name}</strong>. Hello, <strong class='highlight3'>${name}</strong>!"
+          },
+          "_behaviors": {
+            "copy": [
+              {
+                "from": "path",
+                "into": "<strong class='highlight1'>${code}</strong>",
+                "using": { "method": "regex", "selector": "\\d+" }
+              },
+              {
+                "from": { "headers": "X-Request" },
+                "into": "<strong class='highlight2'>${header}</strong>",
+                "using": { "method": "regex", "selector": ".+" }
+              },
+              {
+                "from": { "query": "name" },
+                "into": "<strong class='highlight3'>${name}</strong>",
+                "using": {
+                  "method": "regex",
+                  "selector": "MOUNT\\w+$",
+                  "options": { "ignoreCase": true }
+                }
+              }
+            ]
+          }
+        }
+      ]
+    }
+  ]
+}
+</code></pre>
+
+<p>This example shows off many of the options of the <code>copy</code> behavior. For example,
+we can plug tokens into any of the response fields (including the <code>statusCode</code>), and
+it shows how to navigate object request fields, like the <code>name</code> querystring
+parameter. It shows an example of using regular expressions options to get a case-insensitive
+regular expression to capture the <code>name</code> query parameter. It also shows matching multiple
+request fields using an array of <code>copy</code> configurations. Let's see what happens when we
+craft a request to match all of those selectors:</p>
+
+<pre><code data-test-id='copy-regex'
+           data-test-step='2'
+           data-test-type='http'>
+GET /statusCode/<strong class='highlight1'>400</strong>?ignore=this&<strong class='highlight3'>name=mountebank</strong> HTTP/1.1
+Host: localhost:8585
+X-REQUEST: <strong class='highlight2'>Header value</strong>
+</code></pre>
+
+<pre><code data-test-id='copy-regex'
+           data-test-verify-step='2'
+           data-test-ignore-lines='["^Date"]'>
+HTTP/1.1 <strong class='highlight1'>400</strong> Bad Request
+Date: Thu, 28 Dec 2016 11:37:31 GMT
+X-Test: <strong class='highlight2'>Header value</strong>
+Connection: close
+Transfer-Encoding: chunked
+
+The request name was <strong class='highlight3'>mountebank</strong>. Hello, <strong class='highlight3'>mountebank</strong>!
+</code></pre>
+
+<code class='hidden'
+      data-test-id='copy-regex'
+      data-test-step='3'
+      data-test-type='http'>
+DELETE /imposters/8585 HTTP/1.1
+Host: localhost:<%= port %>
+</code>
+
+<h3 id='copy-xpath-replacement'>xpath</h3>
+
+<p>The following example shows a simple namespaced xpath match to grab the first <code>title</code> field in
+an XML document and copy it into the <code>BOOK</code> response token.</p>
+
+<pre><code data-test-id='copy-xpath'
+           data-test-step='1'
+           data-test-type='http'>
+POST /imposters HTTP/1.1
+Host: localhost:<%= port %>
+Accept: application/json
+Content-Type: application/json
+
+{
+  "port": 8586,
+  "protocol": "http",
+  "stubs": [
+    {
+      "responses": [
+        {
+          "is": {
+            "body": "Have you read <strong class='highlight1'>BOOK</strong>?"
+          },
+          "_behaviors": {
+            "copy": [{
+              "from": "body",
+              "into": "<strong class='highlight1'>BOOK</strong>",
+              "using": {
+                "method": "xpath",
+                "selector": "//isbn:title",
+                "ns": {
+                  "isbn": "http://schemas.isbn.org/ns/1999/basic.dtd"
+                }
+              }
+            }]
+          }
+        }
+      ]
+    }
+  ]
+}
+</code></pre>
+
+<p>The <code>ns</code> object map is optional and can be ignored if your xpath selector doesn't depend on
+namespaces. It doesn't matter how many <code>name</code> elements exist in the XML. Without using indexed
+tokens, only the first match will be used:</p>
+
+<pre><code data-test-id='copy-xpath'
+           data-test-step='2'
+           data-test-type='http'>
+POST /names HTTP/1.1
+Host: localhost:8586
+
+&lt;books xmlns:isbn=&quot;http://schemas.isbn.org/ns/1999/basic.dtd&quot;&gt;
+  &lt;book&gt;
+    &lt;isbn:title&gt;<strong class='highlight1'>Game of Thrones</strong>&lt;/isbn:title&gt;
+    &lt;isbn:summary&gt;Dragons and political intrigue&lt;/isbn:summary&gt;
+  &lt;/book&gt;
+  &lt;book&gt;
+    &lt;isbn:title&gt;Harry Potter&lt;/isbn:title&gt;
+    &lt;isbn:summary&gt;Dragons and a boy wizard&lt;/isbn:summary&gt;
+  &lt;/book&gt;
+  &lt;book&gt;
+    &lt;isbn:title&gt;The Hobbit&lt;/isbn:title&gt;
+    &lt;isbn:summary&gt;A dragon and short people&lt;/isbn:summary&gt;
+  &lt;/book&gt;
+&lt;/books&gt;
+</code></pre>
+
+<pre><code data-test-id='copy-xpath'
+           data-test-verify-step='2'
+           data-test-ignore-lines='["^Date"]'>
+HTTP/1.1 200 OK
+Date: Thu, 28 Dec 2016 11:37:31 GMT
+Connection: close
+Transfer-Encoding: chunked
+
+Have you read <strong class='highlight1'>Game of Thrones</strong>?
+</code></pre>
+
+<code class='hidden'
+      data-test-id='copy-xpath'
+      data-test-step='3'
+      data-test-type='http'>
+DELETE /imposters/8586 HTTP/1.1
+Host: localhost:<%= port %>
+</code>
+
+<h3 id='copy-jsonpath-replacement'>xpath</h3>
+
+<p>The following example translates the XML example above into JSON. To make it more interesting,
+we'll show it using the <code>tcp</code> protocol</p>
+
+<pre><code data-test-id='copy-jsonpath'
+           data-test-step='1'
+           data-test-type='http'>
+POST /imposters HTTP/1.1
+Host: localhost:<%= port %>
+Accept: application/json
+Content-Type: application/json
+
+{
+  "port": 8587,
+  "protocol": "tcp",
+  "stubs": [
+    {
+      "responses": [
+        {
+          "is": {
+            "data": "Have you read <strong class='highlight1'>BOOK</strong>?"
+          },
+          "_behaviors": {
+            "copy": [{
+              "from": "data",
+              "into": "<strong class='highlight1'>BOOK</strong>",
+              "using": {
+                "method": "jsonpath",
+                "selector": "$..title"
+              }
+            }]
+          }
+        }
+      ]
+    }
+  ]
+}
+</code></pre>
+
+<p>Again, by default only the first match will be used:</p>
+
+<pre><code data-test-id='copy-jsonpath'
+           data-test-step='2'
+           data-test-type='exec'>
+echo '{
+  "books": [
+    {
+      "title": "<strong class='highlight1'>Game of Thrones</strong>",
+      "summary": "Dragons and political intrigue"
+    },
+    {
+      "title": "Harry Potter",
+      "summary": "Dragons and a boy wizard"
+    },
+    {
+      "title": "The Hobbit",
+      "summary": "A dragon and short people"
+    }
+  ]
+}' | nc localhost 8587
+</code></pre>
+
+<pre><code data-test-id='copy-jsonpath'
+           data-test-verify-step='2'>
+Have you read <strong class='highlight1'>Game of Thrones</strong>?
+</code></pre>
+
+<code class='hidden'
+      data-test-id='copy-jsonpath'
+      data-test-step='3'
+      data-test-type='http'>
+DELETE /imposters/8587 HTTP/1.1
+Host: localhost:<%= port %>
+</code>
+
+<h3 id='copy-indexed-replacement'>Indexed replacements</h3>
+
+<p>Finally, let's show an example that uses multiple matches for a given selector. To
+show that the same approach works for multiple selection methods, we'll show it for both
+regular expressions and jsonpath:</p>
+
+<pre><code data-test-id='copy-indexed'
+           data-test-step='1'
+           data-test-type='http'>
+POST /imposters HTTP/1.1
+Host: localhost:<%= port %>
+Accept: application/json
+Content-Type: application/json
+
+{
+  "port": 8588,
+  "protocol": "http",
+  "stubs": [
+    {
+      "responses": [
+        {
+          "is": {
+            "body": "<strong class='highlight2'>${BOOK}[1]</strong>: <strong class='highlight1'>${SUMMARY}[0]</strong>\n<strong class='highlight2'>${BOOK}[2]</strong>: <strong class='highlight1'>${SUMMARY}[1]</strong>\n<strong class='highlight2'>${BOOK}[3]</strong>: <strong class='highlight1'>${SUMMARY}[2]</strong>"
+          },
+          "_behaviors": {
+            "copy": [
+              {
+                "from": "body",
+                "into": "<strong class='highlight1'>${SUMMARY}</strong>",
+                "using": {
+                  "method": "jsonpath",
+                  "selector": "$..summary"
+                }
+              },
+              {
+                "from": { "query": "books" },
+                "into": "<strong class='highlight2'>${BOOK}</strong>",
+                "using": {
+                  "method": "regex",
+                  "selector": "([^,]+),([^,]+),(.+)$"
+                }
+              }
+            ]
+          }
+        }
+      ]
+    }
+  ]
+}
+</code></pre>
+
+<p>Note the mismatched indexes between the two selection methods. This is because we use the standard regular
+expression semantics around matched groups, which is that the first element in the matches will be the entire
+matched expression, the second element will be the first parenthesized match group, and so on. Also note that
+<code>${SUMMARY}[0]</code> and <code>${SUMMARY}</code> will be treated identically.   We'll
+trigger the substitutions with the following request:</p>
+
+<pre><code data-test-id='copy-indexed'
+           data-test-step='2'
+           data-test-type='http'>
+POST /?books=<strong class='highlight2'>Game%20of%20Thrones</strong>,<strong class='highlight2'>Harry%20Potter</strong>,<strong class='highlight2'>The%20Hobbit</strong> HTTP/1.1
+Host: localhost:8588
+
+{
+  "books": [
+    {
+      "title": "Game of Thrones",
+      "summary": "<strong class='highlight1'>Dragons and political intrigue</strong>"
+    },
+    {
+      "title": "Harry Potter",
+      "summary": "<strong class='highlight1'>Dragons and a boy wizard</strong>"
+    },
+    {
+      "title": "The Hobbit",
+      "summary": "<strong class='highlight1'>A dragon and short people</strong>"
+    }
+  ]
+}
+</code></pre>
+
+<pre><code data-test-id='copy-indexed'
+           data-test-verify-step='2'
+           data-test-ignore-lines='["^Date"]'>
+HTTP/1.1 200 OK
+Date: Thu, 28 Dec 2016 11:37:31 GMT
+Connection: close
+Transfer-Encoding: chunked
+
+<strong class='highlight2'>Game of Thrones</strong>: <strong class='highlight1'>Dragons and political intrigue</strong>
+<strong class='highlight2'>Harry Potter</strong>: <strong class='highlight1'>Dragons and a boy wizard</strong>
+<strong class='highlight2'>The Hobbit</strong>: <strong class='highlight1'>A dragon and short people</strong>
+</code></pre>
+
+<code class='hidden'
+      data-test-id='copy-indexed'
+      data-test-step='3'
+      data-test-type='http'>
+DELETE /imposters/8588 HTTP/1.1
+Host: localhost:<%= port %>
+</code>

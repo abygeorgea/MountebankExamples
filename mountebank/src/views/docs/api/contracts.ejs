@@ -1,0 +1,124 @@
+<%
+title = 'Contracts'
+description = 'Contract specifications and descriptions'
+
+function indent (spaces) {
+  var result = '';
+  for (var i = 0; i < spaces - 2; i++) {
+    result += ' ';
+  }
+  return " <a title='Click to pin documentation on the right' class='thumbtack-icon'></a>" + result;
+}
+%>
+
+<% include ../../_header %>
+
+<h1>Contracts</h1>
+
+<p>To get more details on any field, simply hover your mouse over that field.  Purple fields
+are only meaningful in the response; they will be ignored in any requests.</p>
+
+<p>Showing contract for the
+  <select id='contract-types'>
+    <option value='home'>home</option>
+    <option value='imposters'>imposters</option>
+    <option value='imposter'>imposter</option>
+    <option value='config'>config</option>
+    <option value='logs'>logs</option>
+  </select> resource.</p>
+
+<div class='contract' id='specification'>
+  <% include contracts/home %>
+  <% include contracts/imposters %>
+  <% include contracts/imposter %>
+  <% include contracts/config %>
+  <% include contracts/logs %>
+</div>
+
+<div class='contract' id='specification-description'>
+  <% include contracts/home-description %>
+  <% include contracts/imposters-description %>
+  <% include contracts/imposter-description %>
+  <% include contracts/config-description %>
+  <% include contracts/logs-description %>
+</div>
+
+
+<script type='text/javascript'>
+  $(document).ready(function () {
+    function descriptionFor (id) {
+      return $('#' + id + '-description');
+    }
+
+    function movedRight (fromElement, x, y) {
+      return x > fromElement.offset().left &&
+             y > fromElement.offset().top &&
+             y < fromElement.offset().top + fromElement.height();
+    }
+
+    function hoverOn () {
+      $('#specification span').on('mouseenter', function () {
+        $('#specification span').css('background-color', '');
+        $('#specification-description div').hide();
+
+        var firstSpan = $(this).parent().find(':first-child');
+        descriptionFor(this.id).css('top', $(this).offset().top - firstSpan.offset().top);
+
+        $(this).find('a').css('visibility', 'visible');
+        $(this).css('background-color', 'gold');
+        descriptionFor(this.id).show();
+      });
+
+      $('#specification span').on('mouseleave', function (event) {
+        $(this).find('a').css('visibility', 'hidden');
+
+        if (!movedRight($(event.fromElement), event.pageX, event.pageY)) {
+          $(this).css('background-color', '');
+          descriptionFor(this.id).hide();
+        }
+      });
+    }
+
+    function hoverOff () {
+      $('#specification span').off('mouseenter');
+      $('#specification span').off('mouseleave');
+    }
+
+    $('#specification a').click(function () {
+      if (!this.pinned) {
+        this.pinned = true;
+        $(this).css('text-decoration', 'underline');
+        hoverOff();
+      }
+      else {
+        this.pinned = false;
+        $(this).css('text-decoration', '');
+        hoverOn();
+      }
+    });
+
+    function contractType () {
+      var query = location.search.substring(1).split('&');
+      for (var i = 0; i < query.length; i++) {
+        var key = query[i].split('=')[0],
+            value = query[i].split('=')[1];
+        if (key === 'type') {
+          return value;
+        }
+      }
+      return 'imposter';
+    }
+
+    $('#contract-types').change(function () {
+      var id = $(this).val() + '-specification';
+      $('#specification pre').hide();
+      $('#' + id).show();
+      $('#specification-description').height($('#' + id).height());
+    });
+
+    hoverOn();
+    $('#contract-types').val(contractType()).change();
+  });
+</script>
+
+<% include ../../_footer %>

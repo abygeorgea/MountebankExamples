@@ -1,0 +1,92 @@
+<h1>v1.1.72</h1>
+
+<p>This is a minor release, containing some bug fixes and minor enhancements</p>
+
+<h2>New Features</h2>
+<ul class='bullet-list'>
+  <li>A new page documenting <a href='http://<%= host %>/docs/clientLibraries'>client libraries</a> to make
+    using mountebank in your native language easier.</li>
+  <li>Added ability for the <a href='http://<%= host %>/docs/commandLine'>--configfile option</a> to accept a file glob
+    to support storing imposters in multiple files</li>
+  <li>Added a <a href='https://github.com/bbyars/mountebank/blob/master/src/models/foo/fooServer.js'>fake protocol</a>
+    to show how to add new protocols</li>
+</ul>
+
+<h2>Bug Fixes</h2>
+<ul class='bullet-list'>
+  <li>Fixed <a href='https://github.com/bbyars/mountebank/issues/44'>proxying to https with invalid certs</a></li>
+  <li>Removed <a href='https://github.com/bbyars/mountebank/issues/46'>unnecessary ? from proxy URLs</a> without query params</li>
+  <li>Attach logger to Console only when in terminal mode</li>
+  <li>Delaying closing tcp proxy connection immediately to support CORBA proxying</li>
+  <li>Fix Internal Server Error while null predicates</li>
+  <li>Fixed bug with predicates not working intuitively for multi-valued query string keys</li>
+</ul>
+
+<p>Many thanks to the following kind folk for help with this release, both for pull requests and bug reports:</p>
+
+<ul class='bullet-list'>
+  <li><a href='https://github.com/quad'>Scott Robinson</a></li>
+  <li><a href='https://github.com/zedar'>Robert Zakrzewski</a></li>
+  <li><a href='https://github.com/ndrwdn'>Andrew Dean</a></li>
+  <li><a href='https://github.com/vocatan'>Bill Mitchell</a></li>
+  <li><a href='https://github.com/CoderKungfu'>Michael Cheng</a></li>
+  <li>Lee Meador</li>
+  <li>Michael Wongwaisayawan</li>
+  <li>Rohit Goyal</li>
+</ul>
+
+<h2>Install</h2>
+
+<pre><code>
+  npm install -g mountebank@1.1.72 --production
+</code></pre>
+
+<p>or:</p>
+
+<table>
+  <tr>
+    <th>Option</th>
+    <th>node.js required?</th>
+    <th>sudo required?</th>
+    <th>links</th>
+    <th>Description</th>
+  </tr>
+  <tr>
+    <td>Self-contained archives</td>
+    <td>No</td>
+    <td>No</td>
+    <td style="min-width: 5em;">
+      <ul>
+        <li><a href="https://s3.amazonaws.com/mountebank/v1.1/mountebank-v1.1.72-linux-x86.tar.gz">linux x86</a></li>
+        <li><a href="https://s3.amazonaws.com/mountebank/v1.1/mountebank-v1.1.72-linux-x64.tar.gz">linux x64</a></li>
+        <li><a href="https://s3.amazonaws.com/mountebank/v1.1/mountebank-v1.1.72-win-x86.zip">win x86</a></li>
+        <li><a href="https://s3.amazonaws.com/mountebank/v1.1/mountebank-v1.1.72-win-x64.zip">win x64</a></li>
+      </ul>
+    </td>
+    <td>Simply unpack and run <code>mb</code> from inside</td>
+  </tr>
+  <tr>
+    <td>OS-specific packages</td>
+    <td>No</td>
+    <td>Yes</td>
+    <td>
+      <ul>
+        <li><a href="https://s3.amazonaws.com/mountebank/v1.1/mountebank-v1.1.72.pkg">pkg</a></li>
+        <li><a href="https://s3.amazonaws.com/mountebank/v1.1/mountebank-1.1.72-1.x86_64.rpm">rpm</a></li>
+        <li><a href="https://s3.amazonaws.com/mountebank/v1.1/mountebank_1.1.72_amd64.deb">deb</a></li>
+      </ul>
+    </td>
+    <td>Puts <code>mb</code> at <code>/usr/local/bin</code>, which is generally in the <code>PATH</code>.</td>
+  </tr>
+  <tr>
+    <td>source tarball</td>
+    <td>Yes</td>
+    <td>No</td>
+    <td>
+      <ul>
+        <li><a href="https://s3.amazonaws.com/mountebank/v1.1/mountebank-v1.1.72-npm.tar.gz">mb</a></li>
+      </ul>
+    </td>
+    <td>source tarball if you roll that way.</td>
+  </tr>
+</table>

@@ -1,0 +1,55 @@
+<h1>v1.1.0</h1>
+
+<p>mountebank is happy to provide you with the following changes in v1.1.0</p>
+
+<h2>More Install Options</h2>
+<ul>
+  <li>v1.0 only supported installing through npm.  mountebank now supports self-contained
+    packages on all supported platforms, which do not require node.js installed on the target
+    platform.  See the <a href='http://<%= host %>/docs/install'>install</a> page for details.</li>
+</ul>
+
+<h2>New Features</h2>
+<ul class='bullet-list'>
+  <li>A new <a href='http://<%= host %>/docs/api/overview#get-imposters'><code>?replayable=true</code></a>
+    query parameter to retrieve all imposters or a
+    <a href='http://<%= host %>/docs/api/overview#get-imposter'>single imposter</a> without the
+    <code>requests</code> array, <code>matches</code> array, and hypermedia.
+    This supports runtime downloads of a configuration to replay later.</li>
+  <li>Mass update and delete capability.  mountebank now supports
+    <a href='http://<%= host %>/docs/api/overview#put-imposters'><code>PUT</code></a> and
+    <a href='http://<%= host %>/docs/api/overview#delete-imposters'><code>DELETE</code></a> verbs
+    on /imposters.  This is designed to support loading a configuration file of imposters at
+    runtime.</li>
+  <li>A new <a href='http://<%= host %>/docs/api/stubs#behaviors'><code>_behaviors</code></a> field available for stubs.
+    <code>_behaviors</code> currently supports adding latency to each response.</li>
+  <li>A new <a href='http://<%= host %>/docs/commandLine'><code>--nomock</code></a> command line option to prevent
+    mountebank from recording requests.  This supports long-running processes from leaking memory
+    where mocking is not important.</li>
+  <li>A new <a href='http://<%= host %>/docs/commandLine'><code>--configfile</code></a> command line option to
+    load a configuration file at startup for creating imposters.</li>
+  <li>The <a href='http://<%= host %>/docs/api/overview#get-config'><code>config</code></a> and
+    <a href='http://<%= host %>/docs/api/overview#get-logs'>logs</a> resources are now exposed oer JSON.</li>
+</ul>
+
+<h2>Documentation Improvements</h2>
+<ul class='bullet-list'>
+  <li><a href='http://<%= host %>/docs/examples'>Example usages</a> in multiple languages and multiple protocols.</li>
+  <li>An <a href='http://<%= host %>/feed'>ATOM feed</a>, which will be updated with release notes on every release.  Subscribe in
+    <a href='http://feedly.com/index.html#discover'>feedly</a> or your favorite RSS reader.</li>
+  <li>A new <a href='http://<%= host %>/docs/glossary'>glossary</a> to help explain mountebank concepts.</li>
+  <li>Embedded site search, accessible through the search box in the header.</li>
+</ul>
+
+<h2>Bug Fixes</h2>
+<ul class='bullet-list'>
+  <li>Fixed <a href='https://github.com/bbyars/mountebank/issues/3'>incorrect handling of JSON null values</a></li>
+  <li>Fixed <a href='https://github.com/bbyars/mountebank/pull/9'>inconsistent end tags</a> on the stubs
+    documentation.</li>
+  <li>mountebank now support <a href='https://github.com/bbyars/mountebank/issues/4'>numbers and
+    booleans</a> for <code>deepEquals</code> predicates.</li>
+  <li>Fixed <a href='https://github.com/bbyars/mountebank/issues/10'>rendering of several pages in Internet Explorer</a>.</li>
+</ul>
+
+<p>Many thanks to <a href='http://nikosbaxevanis.com/'>Nikos Baxevanis</a> and
+  <a href='https://github.com/Andhadley'>Andrew Hadley</a> for help with this release.</p>

@@ -1,0 +1,73 @@
+<%
+title = 'client libraries'
+description = 'Native client libraries for your favorite language'
+%>
+
+<% include ../_header %>
+
+<h1>Client Libraries</h1>
+
+<p>While mountebank speaks <a href='/docs/api/overview'>REST</a>, he truly loves your native language
+and has no desire to make you learn another language.  If you have a native library you'd like others
+to be able to use, please send mountebank a note on the <a href='/support'>support page</a> or through
+a pull request to this page and he will add it to the list below.</p>
+
+<p>Some of these are still in their early stages.  Feel free to help the authors out ;></p>
+
+<div>
+    <ul class='bullet-list'>
+      <li>Ruby: <a href='https://github.com/CoderKungfu/mountebank-gem'>mountebank-gem</a> (Michael Cheng)</li>
+      <li>Python: <a href='https://pypi.python.org/pypi/mountebank-python'>mountebank-python</a> (Alex Holyoke)</li>
+      <li>Python: <a href='https://github.com/kevinjqiu/py-mountebank'>py-mountebank</a> (Kevin Qiu)</li>
+      <li>Python <a href='https://pypi.python.org/pypi/mountepy'>mountepy</a> (Michał Bultrowicz)</li>
+      <li>Java: <a href='https://github.com/thejamesthomas/javabank'>javabank</a> (James Thomas)</li>
+      <li>C#: <a href='https://github.com/mattherman/MbDotNet'>MbDotNet</a> (Matthew Herman)</li>
+      <li>Clojure: <a href='https://github.com/mdaley/charlatan'>Charlatan</a> (Matthew Daley)</li>
+      <li>PHP: <a href='https://packagist.org/packages/abevallez/mountebank-php'>mountebank-php</a> (Abraham Vallez)</li>
+      <li>PHP: <a href="https://github.com/meare/juggler">Juggler</a> (Andrejs Mironovs)</li>
+      <li>Go: <a href='https://github.com/durmaze/gobank'>GoBank</a> (Erkan)</li>
+      <li>TypeScript: <a href='https://www.npmjs.com/package/@toincrease/node-mountebank'>node-mountebank</a> (Ron van der Wijngaard)</li>
+      <li>Perl: <a href='https://metacpan.org/release/Test-Mountebank'>Test::Mountebank</a> (Dagfinn Reiersøl)</li>
+      <li>JavaScript: <a href='https://www.npmjs.com/package/mountebank-helper'>mountebank-helper</a> (Alex Tzinov)</li>
+    </ul>
+</div>
+
+<h1>Orchestrators and extensions</h1>
+
+<p>The following are higher level tools that augment mountebank with additional functionality.</p>
+
+<div>
+    <ul class='bullet-list'>
+        <li><a href='https://github.com/DevTestSolutions/TestDoubles'>TestDoubles</a> by CA Technologies extends
+        mountebank by adding cluster support, named REST APIs, persisted request/response pairs, enhanced command
+        line interface (CLI), with packaging mechanisms including Node.js, Docker, Vagrant, PM2 etc.</li>
+    </ul>
+</div>
+
+<h1>Build Plugins</h1>
+
+<p>Since <code>mb</code> is another process to manage during your build, having a plugin for your build tool is handy.
+If you have a plugin, please add it to this page or let me know about it.</p>
+
+<div>
+  <ul class='bullet-list'>
+    <li>Grunt: <a href='https://github.com/bbyars/mountebank-grunt'>grunt-mountebank</a> (Extracted from
+    the mountebank source)</li>
+    <li>Gradle: <a href='https://github.com/ndrwdn/mountebank-gradle'>mountebank-gradle</a> (Andrew Dean)</li>
+  </ul>
+</div>
+
+<h2>Build Plugin Implementation Notes</h2>
+
+<p>As of v1.4.3, <code>mb</code> writes the pidfile (mb.pid by default, although it can be overridden on the
+command line) only after it has fully initialized, including binding to the socket and initializing any
+imposters passed in a config file.  You can use this fact to wait for the pidfile creation before returning
+from a build task to guarantee initialization before the next task runs.</p>
+
+<p>Also note that the command to actually run mountebank can vary depending on both the platform and the installation
+package.  To support all options, you will need to dynamically determine the executable command to run.</p>
+
+<p>See the <a href='https://github.com/bbyars/grunt-mountebank/blob/master/tasks/mb.js'>grunt-mountebank code</a>
+that mountebank uses for its build for an example.</p>
+
+<% include ../_footer %>

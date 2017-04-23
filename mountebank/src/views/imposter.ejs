@@ -1,0 +1,33 @@
+<%
+title = 'imposter information'
+description = 'Information about a specific mountebank imposter'
+%>
+
+<% include _header %>
+
+<h1><%= imposter.protocol %> Imposter on port <%= imposter.port %></h1>
+
+<h2>Requests</h2>
+
+<% imposter.requests.forEach(function (request) { -%>
+  <pre><code>
+    <%= request.method %> <%= request.path %> HTTP/1.1
+<% Object.keys(request.headers).forEach(function (name) { -%>
+    <%= name %>: <%= request.headers[name] %>
+<% }); -%>
+<% if (request.body) { -%>
+
+    <%= request.body %>
+<% } -%>
+  </code></pre>
+<% }); -%>
+
+<h2>Stubs</h2>
+
+<% imposter.stubs.forEach(function (stub) { -%>
+  <pre><code>
+    <%= JSON.stringify(stub, null, 2) %>
+  </code></pre>
+<% }); -%>
+
+<% include _footer %>

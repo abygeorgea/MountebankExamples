@@ -1,0 +1,60 @@
+<%
+title = 'configuration'
+description = 'The version, command line parameters, and process information about this running mb process'
+%>
+
+<% include _header %>
+
+<h1>Config</h1>
+
+<table>
+  <tr>
+    <td>version</td>
+    <td><%= version %></td>
+  </tr>
+<% Object.keys(options).forEach(function (key) { %>
+  <tr>
+    <td><%= key %></td>
+    <td><%= options[key] %></td>
+  </tr>
+<% }); -%>
+</table>
+
+<h2>Process Information</h2>
+
+<table>
+  <tr>
+    <td>node version</td>
+    <td><%= process.nodeVersion %></td>
+  </tr>
+  <tr>
+    <td>architecture</td>
+    <td><%= process.architecture %></td>
+  </tr>
+  <tr>
+    <td>platform</td>
+    <td><%= process.platform %></td>
+  </tr>
+  <tr>
+    <td>rss</td>
+    <td><%= process.rss %></td>
+  </tr>
+  <tr>
+    <td>heapTotal</td>
+    <td><%= process.heapTotal %></td>
+  </tr>
+  <tr>
+    <td>heapUsed</td>
+    <td><%= process.heapUsed %></td>
+  </tr>
+  <tr>
+    <td>uptime</td>
+    <td><%= process.uptime %></td>
+  </tr>
+  <tr>
+    <td>cwd</td>
+    <td><%= process.cwd %></td>
+  </tr>
+</table>
+
+<% include _footer %>

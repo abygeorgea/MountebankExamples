@@ -1,0 +1,743 @@
+<%
+title = 'API overview'
+description = "An overview of mountebank's RESTful API"
+%>
+
+<% include ../../_header %>
+
+<h1>API Overview</h1>
+
+<p>mountebank, being a man of the people, prefers the simple words of the vernacular over
+the silvery speech of the priesthood.  As if to prove the point, he speaks in a RESTful
+<code>application/json</code> rather than <code>application/vnd.mountebank+json</code>.
+While he does provide hypermedia, it is more as a convenience to you, with no professorial
+dictate that you follow the script provided.  To show how committed he is to that principle,
+all resources are described below, complete with URL templates.</p>
+
+<p>mountebank uses a basic set of HTTP status codes.  He knows that a 200 or 201 will
+make you happiest, but unfortunately he cannot guarantee that you will always receive
+one of those codes.  In the cases where the input you provide is malformed in some
+fashion, he will offer a humble apology for not being clear about what he needs, and
+respond with a 400.  In situations where you ask for a port that mountebank
+is unable to reserve, he will return you a 403.  Every effort has gone into providing
+<a href='/docs/api/errors'>response bodies</a> to help you diagnose the problems.  Each
+error response returned will have a <code>code</code> and <code>message</code> at a minimum.
+If extra information is available, mountebank will happily pass it to you.  If you get stuck,
+email the group on the <a href='/support'>support page</a>, along with your logs, and mountebank
+will happily assist you.</p>
+
+<p>mountebank has made every effort to spare you from 5xx HTTP codes.  If you are
+unfortunate enough to receive one, first you should know that mountebank is most embarrassed.
+Please <a href='/support'>report</a> the issue with the log details, and mountebank will
+help make it right for you.</p>
+
+<h2>Capabilities</h2>
+
+<p>mountebank supports the following capabilities:</p>
+
+<table>
+  <tr>
+    <th style='width: 25em;'>Capability</th>
+    <th>Resource Contract</th>
+  </tr>
+  <tr>
+    <td><a href='#get-home'>Get entry hypermedia</a></td>
+    <td><a href='/docs/api/contracts?type=home'>home resource</a></td>
+  </tr>
+  <tr>
+    <td><a href='#post-imposters'>Create a single imposter</a></td>
+    <td><a href='/docs/api/contracts?type=imposter'>imposter resource</a></td>
+  </tr>
+  <tr>
+    <td><a href='#get-imposter'>Get a single imposter</a></td>
+    <td><a href='/docs/api/contracts?type=imposter'>imposter resource</a></td>
+  </tr>
+  <tr>
+    <td><a href='#delete-imposter'>Delete a single imposter</a></td>
+    <td><a href='/docs/api/contracts?type=imposter'>imposter resource</a></td>
+  </tr>
+  <tr>
+    <td><a href='#put-imposters'>Overwrite all imposters with a new set of imposters</a></td>
+    <td><a href='/docs/api/contracts?type=imposters'>imposters resource</a></td>
+  </tr>
+  <tr>
+    <td><a href='#get-imposters'>Get a list of all imposters</a></td>
+    <td><a href='/docs/api/contracts?type=imposters'>imposters resource</a></td>
+  </tr>
+  <tr>
+    <td><a href='#delete-imposters'>Delete all imposters</a></td>
+    <td><a href='/docs/api/contracts?type=imposters'>imposters resource</a></td>
+  </tr>
+  <tr>
+    <td><a href='#get-config'>Get mountebank configuration and process information</a></td>
+    <td><a href='/docs/api/contracts?type=config'>config resource</a></td>
+  </tr>
+  <tr>
+    <td><a href='#get-logs'>Get the logs</a></td>
+    <td><a href='/docs/api/contracts?type=logs'>logs resource</a></td>
+  </tr>
+</table>
+
+<h3 id='get-home'>Get entry hypermedia</h3>
+
+<pre><code>GET /</code></pre>
+
+<p><b>Contract</b>: <a href='/docs/api/contracts?type=home'>home resource</a></p>
+
+<p>Unpretentious and welcoming, mirroring mountebank's simple good nature.  This endpoint
+exists for those who aspire to the
+<a href='http://martinfowler.com/articles/richardsonMaturityModel.html'>upper echelons of REST</a>,
+though they may be disappointed at the lack of URLs for relationships.</p>
+
+<pre><code data-test-id='home'
+           data-test-step='1'
+           data-test-type='http'>
+GET / HTTP/1.1
+Host: localhost:<%= port %>
+Accept: application/json
+</code></pre>
+
+<pre><code data-test-id='home'
+           data-test-verify-step='1'
+           data-test-ignore-lines='["^Date"]'>
+HTTP/1.1 200 OK
+Access-Control-Allow-Origin: *
+Vary: Accept
+Content-Type: application/json; charset=utf-8
+Content-Length: 226
+Date: Sun, 05 Jan 2014 16:16:08 GMT
+Connection: keep-alive
+
+{
+  "_links": {
+    "imposters": {
+      "href": "http://localhost:<%= port %>/imposters"
+    },
+    "config": {
+      "href": "http://localhost:<%= port %>/config"
+    },
+    "logs": {
+      "href": "http://localhost:<%= port %>/logs"
+    }
+  }
+}
+</code></pre>
+
+
+<h3 id='post-imposters'>Create a single imposter</h3>
+
+<pre><code>POST /imposters</code></pre>
+
+<p><b>Contract</b>: <a href='/docs/api/contracts?type=imposter'>imposter resource</a></p>
+
+<p>Though he's not proud to admit it, mountebank employs an army of imposters to
+fulfill your orders.  Because your needs are varied and sundry, his imposters
+are all different, and all are identified by a port number and associated with
+a protocol.  The value you get out of mountebank always starts by creating an imposter,
+which represents a test double listening on a socket.</p>
+
+<p><strong>Parameters:</strong></p>
+
+<p>If you don't need stubbing, then the port and protocol are all you need.  The parameters
+each type of imposter accepts are explained on the page for the particular protocol
+you're interested in.  See the protocols section on the sidebar on the left.</p>
+
+<p>mountebank expects that you will be responsible for providing the
+port, since you'll need to configure the application under test with the same
+port.  However, the port is not required, and if you do not include it in the
+request, mountebank will randomly assign one for you and return the port number
+in the response.</p>
+
+<pre><code data-test-id='imposters'
+           data-test-step='1'
+           data-test-type='http'>
+POST /imposters HTTP/1.1
+Host: localhost:<%= port %>
+Accept: application/json
+Content-Type: application/json
+
+{
+  "port": 4545,
+  "protocol": "http"
+}
+</code></pre>
+
+<pre><code data-test-id='imposters'
+           data-test-verify-step='1'
+           data-test-ignore-lines='["^Date"]'>
+HTTP/1.1 201 Created
+Access-Control-Allow-Origin: *
+Location: http://localhost:<%= port %>/imposters/4545
+Content-Type: application/json; charset=utf-8
+Content-Length: 190
+Date: Sun, 05 Jan 2014 16:28:40 GMT
+Connection: keep-alive
+
+{
+  "protocol": "http",
+  "port": 4545,
+  "numberOfRequests": 0,
+  "requests": [],
+  "stubs": [],
+  "_links": {
+    "self": {
+      "href": "http://localhost:<%= port %>/imposters/4545"
+    }
+  }
+}
+</code></pre>
+
+<p>You would also create any <a href='/docs/api/stubs'>stubs</a> in the <code>POST</code> call.
+Imposters are not mutable through the API once created.  The expected use case is that they are
+setup for a single test run and destroyed at the completion of the test.  The
+<a href='/docs/examples'>examples</a> page links to demonstrations of this pattern in multiple
+languages and for multiple protocols.</p>
+
+<p>mountebank expects you to configure your application under test to point to the imposter.  In
+the case above, that would mean that your application has an http dependency configured to
+http://localhost:4545.  To retrieve a list of all imposters, simply issue a <code>GET</code>:</p>
+
+
+<h3 id='get-imposter'>Get a single imposter</h3>
+
+<pre><code>GET /imposters/:port</code></pre>
+
+<p><b>Contract</b>: <a href='/docs/api/contracts?type=imposter'>imposter resource</a></p>
+
+<p>Retrieving an imposter is generally useful for one the following reasons:</p>
+
+<ul class='bullet-list'>
+  <li>You want to perform <a href='/docs/api/mocks'>mock verifications</a> by inspecting the
+    <a href='/docs/api/mocks'><code>requests</code> array</a> (you must run <code>mb</code> with the
+    <a href='/docs/commandLine'> <code>--mock</code> command line parameter</a> for this to work).</li>
+  <li>You want to debug <a href='/docs/api/predicates'>stub predicates</a> by inspecting the
+    <a href='/docs/api/stubs#matches-array'><code>matches</code> array</a> (you must run
+    <code>mb</code> with the <a href='/docs/commandLine'> <code>--debug</code> command line
+      parameter</a> for this to work).</li>
+  <li>You <a href='/docs/api/proxies'>proxied</a> a real service, and want to be save off the
+    saved responses in a subsequent disconnected test run.</li>
+</ul>
+
+<p><strong>Query Parameters:</strong></p>
+
+<table>
+  <tr>
+    <th>Name</th>
+    <th>Type</th>
+    <th>Description</th>
+  </tr>
+  <tr>
+    <td><code>replayable</code></td>
+    <td>boolean</td>
+    <td>Set to <code>true</code> to retrieve the minimum amount of information for
+      <a href='#post-imposters'>creating the imposter</a> in the future.  This leaves
+      out the <a href='/docs/api/mocks'><code>requests</code> array</a>, the
+      <a href='/docs/api/stubs#matches-array'> <code>matches</code> array</a>, and any hypermedia.</td>
+  </tr>
+  <tr>
+    <td><code>removeProxies</code></td>
+    <td>boolean</td>
+    <td>Set to <code>true</code> to remove all proxy responses (and stubs) from the response.
+      This is useful in record-playback scenarios where you want to seed the imposters with
+      proxy information but leave it out on subsequent test runs.  You can
+      <a href='#post-imposters'>recreate the imposter</a> in the future by using the response.</td>
+  </tr>
+</table>
+
+<pre><code data-test-id='imposters'
+           data-test-step='2'
+           data-test-type='http'>
+GET /imposters/4545 HTTP/1.1
+Host: localhost:<%= port %>
+Accept: application/json
+</code></pre>
+
+<pre><code data-test-id='imposters'
+           data-test-verify-step='2'
+           data-test-ignore-lines='["^Date"]'>
+HTTP/1.1 200 OK
+Access-Control-Allow-Origin: *
+Vary: Accept
+Content-Type: application/json; charset=utf-8
+Content-Length: 190
+Date: Sun, 05 Jan 2014 16:59:33 GMT
+Connection: keep-alive
+
+{
+  "protocol": "http",
+  "port": 4545,
+  "numberOfRequests": 0,
+  "requests": [],
+  "stubs": [],
+  "_links": {
+    "self": {
+      "href": "http://localhost:<%= port %>/imposters/4545"
+    }
+  }
+}
+</code></pre>
+
+<p>Had we set the <code>replayable</code> query parameter, the
+<a href='/docs/api/mocks'><code>requests</code> array</a> and
+<code>_links</code> elements would not be there.  If we had any <a href='/docs/api/stubs'>stubs</a>,
+the <a href='/docs/api/stubs#matches-array'><code>matches</code> array</a> would also not be present
+regardless of whether we ran <code>mb</code> with the <code>--debug</code> command line parameter or
+not.  None of those fields are used during the creation of an imposter.</p>
+
+<pre><code data-test-id='imposters'
+           data-test-step='3'
+           data-test-type='http'>
+GET /imposters/4545?replayable=true HTTP/1.1
+Host: localhost:<%= port %>
+Accept: application/json
+</code></pre>
+
+<pre><code data-test-id='imposters'
+           data-test-verify-step='3'
+           data-test-ignore-lines='["^Date"]'>
+HTTP/1.1 200 OK
+Access-Control-Allow-Origin: *
+Vary: Accept
+Content-Type: application/json; charset=utf-8
+Content-Length: 55
+Date: Sun, 05 Jan 2014 16:59:33 GMT
+Connection: keep-alive
+
+{
+  "protocol": "http",
+  "port": 4545,
+  "stubs": []
+}
+</code></pre>
+
+
+<h3 id='delete-imposter'>Delete a single imposter</h3>
+
+<pre><code>DELETE /imposters/:port</code></pre>
+
+<p><b>Contract</b>: <a href='/docs/api/contracts?type=imposter'>imposter resource</a></p>
+
+<p>As mentioned above, typically you want to delete the imposter after each test run.  This
+frees up the socket and removes the resource.  As a convenience, the <code>DELETE</code> call
+also returns the imposter representation just like a <a href='#get-imposter'><code>GET</code> imposter</a>
+would.  This allows you to optimize the number of REST calls made during a test run when looking
+at the <code>requests</code> array for <a href='/docs/api/mocks'>mock verification.</a><p>
+
+<p><strong>Query Parameters:</strong></p>
+
+<table>
+  <tr>
+    <th>Name</th>
+    <th>Type</th>
+    <th>Description</th>
+  </tr>
+  <tr>
+    <td><code>replayable</code></td>
+    <td>boolean</td>
+    <td>Set to <code>true</code> to retrieve the minimum amount of information for
+      <a href='#post-imposters'>creating the imposter</a> in the future.  This leaves
+      out the <a href='/docs/api/mocks'><code>requests</code> array</a>, the
+      <a href='/docs/api/stubs#matches-array'>
+      <code>matches</code> array</a>, and any hypermedia.</td>
+  </tr>
+  <tr>
+    <td><code>removeProxies</code></td>
+    <td>boolean</td>
+    <td>Set to <code>true</code> to remove all proxy responses (and stubs) from the response.
+      This is useful in record-playback scenarios where you want to seed the imposters with
+      proxy information but leave it out on subsequent test runs.  You can
+      <a href='#post-imposters'>recreate the imposter</a> in the future by using the response.</td>
+  </tr>
+</table>
+
+<pre><code data-test-id='imposters'
+           data-test-step='4'
+           data-test-type='http'>
+DELETE /imposters/4545 HTTP/1.1
+Host: localhost:<%= port %>
+Accept: application/json
+</code></pre>
+
+<pre><code data-test-id='imposters'
+           data-test-verify-step='4'
+           data-test-ignore-lines='["^Date"]'>
+HTTP/1.1 200 OK
+Access-Control-Allow-Origin: *
+Content-Type: application/json; charset=utf-8
+Content-Length: 190
+Date: Sun, 05 Jan 2014 16:59:33 GMT
+Connection: keep-alive
+
+{
+  "protocol": "http",
+  "port": 4545,
+  "numberOfRequests": 0,
+  "requests": [],
+  "stubs": [],
+  "_links": {
+    "self": {
+      "href": "http://localhost:<%= port %>/imposters/4545"
+    }
+  }
+}
+</code></pre>
+
+
+<h3 id='put-imposters'>Overwrite all imposters with a new set of imposters</h3>
+
+<pre><code>PUT /imposters</code></pre>
+
+<p><b>Contract</b>: <a href='/docs/api/contracts?type=imposters'>imposters resource</a></p>
+
+<p>Sometimes you want to create a batch of imposters in a single call, overwriting
+any imposters already created.  This call is destructive - it will first delete all
+existing imposters.  The output of a <code>GET /imposters?replayable=true</code> can
+directly be replayed through this call.  This call is also used during startup
+if you set the <code>--configfile</code> <a href='/docs/commandLine'>command line</a>
+flag.</p>
+
+<p><strong>Parameters:</strong></p>
+
+<p>You must provide mountebank an <code>imposters</code> array.  Each element in the
+array is the same as what's needed to <a href='#post-imposters'>create a single imposter</a>,
+the parameters for which vary by protocol.  View the protocol pages on the left for details.</p>
+
+<pre><code data-test-id='imposters'
+           data-test-step='5'
+           data-test-type='http'>
+PUT /imposters HTTP/1.1
+Host: localhost:<%= port %>
+Content-Type: application/json
+
+{
+  "imposters": [
+    {
+      "protocol": "http",
+      "port": 4546
+    },
+    {
+      "protocol": "tcp",
+      "port": 4547,
+      "mode": "binary"
+    },
+    {
+      "protocol": "smtp",
+      "port": 4548
+    }
+  ]
+}
+</code></pre>
+
+<pre><code data-test-id='imposters'
+           data-test-verify-step='5'
+           data-test-ignore-lines='["^Date"]'>
+HTTP/1.1 200 OK
+Access-Control-Allow-Origin: *
+Content-Type: application/json; charset=utf-8
+Content-Length: 619
+Date: Sun, 05 Jan 2014 16:59:33 GMT
+Connection: keep-alive
+
+{
+  "imposters": [
+    {
+      "protocol": "http",
+      "port": 4546,
+      "numberOfRequests": 0,
+      "_links": {
+        "self": {
+          "href": "http://localhost:<%= port %>/imposters/4546"
+        }
+      }
+    },
+    {
+      "protocol": "tcp",
+      "port": 4547,
+      "numberOfRequests": 0,
+      "_links": {
+        "self": {
+          "href": "http://localhost:<%= port %>/imposters/4547"
+        }
+      }
+    },
+    {
+      "protocol": "smtp",
+      "port": 4548,
+      "numberOfRequests": 0,
+      "_links": {
+        "self": {
+          "href": "http://localhost:<%= port %>/imposters/4548"
+        }
+      }
+    }
+  ]
+}
+</code></pre>
+
+
+<h3 id='get-imposters'>Get a list of all imposters</h3>
+
+<pre><code>GET /imposters</code></pre>
+
+<p><b>Contract</b>: <a href='/docs/api/contracts?type=imposters'>imposters resource</a></p>
+
+<p>This is where you will come to retrieve a list of all active imposters.  By default,
+mountebank returns some basic information and hypermedia.  If you want more information,
+either <a href='#get-imposter'>get the single imposter</a> or use the
+<code>replayable</code> flag.</p>
+
+<p><strong>Query Parameters:</strong></p>
+
+<table>
+  <tr>
+    <th>Name</th>
+    <th>Type</th>
+    <th>Description</th>
+  </tr>
+  <tr>
+    <td><code>replayable</code></td>
+    <td>boolean</td>
+    <td>Set to <code>true</code> to retrieve the minimum amount of information for replaying
+      the set of imposters in the future through a <a href='#put-imposters'>mass create</a>
+      call.  This leaves out the <a href='/docs/api/mocks'><code>requests</code> array</a>, the
+      <a href='/docs/api/stubs#matches-array'><code>matches</code> array</a>,
+      and any hypermedia.</td>
+  </tr>
+  <tr>
+    <td><code>removeProxies</code></td>
+    <td>boolean</td>
+    <td>Set to <code>true</code> to remove all proxy responses (and stubs) from the response.
+      This is useful in record-playback scenarios where you want to seed the imposters with
+      proxy information but leave it out on subsequent test runs.  You can
+      <a href='#put-imposters'>recreate the imposter</a> in the future by using the response.</td>
+  </tr>
+</table>
+
+<pre><code data-test-id='imposters'
+           data-test-step='6'
+           data-test-type='http'>
+GET /imposters HTTP/1.1
+Host: localhost:<%= port %>
+Accept: application/json
+</code></pre>
+
+<pre><code data-test-id='imposters'
+           data-test-verify-step='6'
+           data-test-ignore-lines='["^Date"]'>
+HTTP/1.1 200 OK
+Access-Control-Allow-Origin: *
+Vary: Accept
+Content-Type: application/json; charset=utf-8
+Content-Length: 619
+Date: Sun, 05 Jan 2014 16:58:25 GMT
+Connection: keep-alive
+
+{
+  "imposters": [
+    {
+      "protocol": "http",
+      "port": 4546,
+      "numberOfRequests": 0,
+      "_links": {
+        "self": {
+          "href": "http://localhost:<%= port %>/imposters/4546"
+        }
+      }
+    },
+    {
+      "protocol": "tcp",
+      "port": 4547,
+      "numberOfRequests": 0,
+      "_links": {
+        "self": {
+          "href": "http://localhost:<%= port %>/imposters/4547"
+        }
+      }
+    },
+    {
+      "protocol": "smtp",
+      "port": 4548,
+      "numberOfRequests": 0,
+      "_links": {
+        "self": {
+          "href": "http://localhost:<%= port %>/imposters/4548"
+        }
+      }
+    }
+  ]
+}
+</code></pre>
+
+
+<h3 id='delete-imposters'>Delete all imposters</h3>
+
+<pre><code>DELETE /imposters</code></pre>
+
+<p><b>Contract</b>: <a href='/docs/api/contracts?type=imposters'>imposters resource</a></p>
+
+<p>The surest way to reset to a clean slate is to delete all imposters.  Any imposter sockets
+mountebank has open will be closed, and the response body will contain exactly what you need
+to <a href='#put-imposters'>mass create</a> the same imposters in the future.</p>
+
+<p><strong>Query Parameters:</strong></p>
+
+<table>
+  <tr>
+    <th>Name</th>
+    <th>Type</th>
+    <th>Description</th>
+  </tr>
+  <tr>
+    <td><code>replayable</code></td>
+    <td>boolean</td>
+    <td>Defaults to true.  Set to <code>false</code> to retrieve the
+      <a href='/docs/api/stubs#matches-array'><code>matches</code></a>
+      and <a href='/docs/api/mocks'><code>requests</code></a> arrays with the response.  You can still
+      <a href='#put-imposters'>mass create</a> using this JSON; it just has extraneous information.</td>
+  </tr>
+  <tr>
+    <td><code>removeProxies</code></td>
+    <td>boolean</td>
+    <td>Set to <code>true</code> to remove all proxy responses (and stubs) from the response.
+      This is useful in record-playback scenarios where you want to seed the imposters with
+      proxy information but leave it out on subsequent test runs.  You can
+      <a href='#put-imposters'>recreate the imposters</a> in the future by using the response.</td>
+  </tr>
+</table>
+
+<pre><code data-test-id='imposters'
+           data-test-step='7'
+           data-test-type='http'>
+DELETE /imposters HTTP/1.1
+Host: localhost:<%= port %>
+Accept: application/json
+</code></pre>
+
+<pre><code data-test-id='imposters'
+           data-test-verify-step='7'
+           data-test-ignore-lines='["^Date"]'>
+HTTP/1.1 200 OK
+Access-Control-Allow-Origin: *
+Content-Type: application/json; charset=utf-8
+Content-Length: 277
+Date: Sun, 05 Jan 2014 16:58:25 GMT
+Connection: keep-alive
+
+{
+  "imposters": [
+    {
+      "protocol": "http",
+      "port": 4546,
+      "stubs": []
+    },
+    {
+      "protocol": "tcp",
+      "port": 4547,
+      "mode": "binary",
+      "stubs": []
+    },
+    {
+      "protocol": "smtp",
+      "port": 4548,
+      "stubs": []
+    }
+  ]
+}
+</code></pre>
+
+
+<h3 id='get-config'>Get mountebank configuration and process information</h3>
+
+<pre><code>GET /config</code></pre>
+
+<p><b>Contract</b>: <a href='/docs/api/contracts?type=config'>config resource</a></p>
+
+<p>If you want to know about the environment mountebank is running it, this resource will give you
+what you need.  It describes the version, command line flags, and process information.</p>
+
+<pre><code>
+GET /config HTTP/1.1
+Host: localhost:<%= port %>
+Accept: application/json
+</code></pre>
+
+<pre><code>
+{
+  "version": "1.4.1",
+  "options": {
+    "port": 2525,
+    "pidfile": "mb.pid",
+    "logfile": "mb.log",
+    "loglevel": "info",
+    "configfile": "",
+    "allowInjection": true,
+    "mock": true,
+    "debug": true
+  },
+  "process": {
+    "nodeVersion": "v4.2.0",
+    "architecture": "x64",
+    "platform": "darwin",
+    "rss": 55255040,
+    "heapTotal": 37113600,
+    "heapUsed": 23185680,
+    "uptime": 3.718,
+    "cwd": "/Users/bbyars/Dropbox/src/mountebank"
+  }
+}
+</code></pre>
+
+
+<h3 id='get-logs'>Get the logs</h3>
+
+<pre><code>GET /logs</code></pre>
+
+<p><b>Contract</b>: <a href='/docs/api/contracts?type=logs'>logs resource</a></p>
+
+<p><strong>Query Parameters:</strong></p>
+
+<table>
+  <tr>
+    <th>Name</th>
+    <th>Type</th>
+    <th>Description</th>
+  </tr>
+  <tr>
+    <td><code>startIndex</code></td>
+    <td>integer</td>
+    <td>Set to array index of the first log entry you want returned.</td>
+  </tr>
+  <tr>
+    <td><code>endIndex</code></td>
+    <td>integer</td>
+    <td>Set to the array index of the last log entry you want returned</td>
+  </tr>
+</table>
+
+<pre><code>
+  GET /logs HTTP/1.1
+  Host: localhost:<%= port %>
+  Accept: application/json
+</code></pre>
+
+<pre><code>
+{
+  "logs": [
+    {
+      "level": "info",
+      "message": "[mb:2525] mountebank v1.4.1 (node v4.2.0) now taking orders - point your browser to http://localhost:2525 for help",
+      "timestamp": "2015-10-20T03:33:23.018Z"
+    },
+    {
+      "level": "info",
+      "message": "[mb:2525] GET /logs",
+      "timestamp": "2015-10-20T03:33:25.429Z"
+    }
+  ]
+}
+</code></pre>
+
+<p>In the rare scenario where mountebank is hosted on a different server and you need access to the logs,
+they are accessible through this endpoint.</p>
+
+<% include ../../_footer %>

@@ -1,0 +1,85 @@
+<%
+title = 'over the wire test doubles'
+description = 'mountebank is the first open source, cross-platform, multi-protocol service virtualization tool'
+%>
+
+<% include _header %>
+
+<% if (notices.length > 0) { %>
+<div id='notice'>
+<% notices.forEach(function (notice) { %>
+  <div><a href='/releases/<%= notice.version %>'><%= notice.version %></a> was released <%= notice.when %></div>
+<% }); %>
+</div>
+<% } %>
+
+<h1>Welcome, friend</h1>
+
+<p>mountebank is the first open source tool to provide cross-platform, multi-protocol test
+doubles over the wire.  Simply point your application under test to mountebank
+instead of the real dependency, and test like you would with traditional stubs and mocks.</p>
+
+<p>mountebank is the most capable open source service virtualization tool in existence, and
+    will cure what ails you, guaranteed.</p>
+
+<h2>How it works</h2>
+
+<p>mountebank employs a legion of <em>imposters</em> to act as on-demand test doubles.
+Your test communicates to mountebank over http using the <a href='/docs/api/overview'>api</a>
+to set up <a href='/docs/api/stubs'>stubs</a>, <a href='/docs/api/proxies'>record and replay proxies</a>,
+and verify <a href='/docs/api/mocks'>mock expectations</a>.  In the typical use case, each
+test will start an imposter during test setup and stop an imposter during test teardown, although
+you are also welcome to configure mountebank at startup using a <a href='/docs/commandLine#config-file'>
+config file</a>.</p>
+
+<p>mountebank employs several types of imposters, each responding to a specific protocol.
+Typically, your test will tell the imposter which port to bind to, and the imposter will
+open the corresponding socket.</p>
+
+<img src='/images/overview.gif' alt='mountebank' />
+
+<p>View the <a href='/docs/gettingStarted'>getting started guide</a> for a quick introduction.</p>
+
+<h2>Testimonials</h2>
+
+<blockquote>
+  <p>With mountebank, maybe we <em>could</em> have built it in a day.</p>
+  <p class='cite'>Remus and Romulus, builders of Rome</p>
+</blockquote>
+
+<blockquote>
+  <p class='quote'>With mountebank, all the world's a nail.</p>
+  <p class='cite'>Thor, God of Thunder</p>
+</blockquote>
+
+<blockquote>
+  <p>If at first you don't succeed, it's because you didn't use mountebank.</p>
+  <p class='cite'>Mom</p>
+</blockquote>
+
+<h2>Why mountebank?</h2>
+
+<p>mountebank has the following goals:</p>
+
+<dl>
+  <dt>Trivial to get started</dt>
+  <dd>mountebank is easy to install, without any platform dependencies.  mountebank aims
+    for fun and comprehensive documentation with lots of examples, and a nice UI that lets
+    you explore the API interactively.</dd>
+
+  <dt>A platform, not just a tool</dt>
+  <dd>mountebank aims to be fully cross-platform, with <a href='/docs/clientLibraries'>native language bindings</a>.
+    Servers are <a href="/docs/api/injection">extensible</a> through scripting when the out of the box
+    functionality isn't enough.</dd>
+
+  <dt>Powerful</dt>
+  <dd>mountebank is the only open source service virtualization tool that is non-modal and multi-protocol.
+    Commercial solutions exist, but their licensed platforms make it hard to move the tests closer to development
+    and may even require a specialized IDE. mountebank provides service virtualization free of charge without any
+    platform constraints</dd>
+</dl>
+
+<p>Not all of mountebank's goals are currently implemented, but fear not, for he has
+  a team of top-notch open source developers, and they are legion.</p>
+
+<% include _footer %>

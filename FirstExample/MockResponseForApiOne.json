@@ -1,0 +1,22 @@
+"responses": [
+{
+"is": {
+"statusCode": 200,
+"body": {
+"Text":"Response ONE ","token":"username","expires_in":90
+}
+}
+}
+],
+"predicates": [
+{
+"exists": {
+"body" :
+{
+"username": true,"password" : true
+},
+"method" : "POST",
+"path" : "/Apitesting/v1/test?type=ResponseOne"
+}
+}
+]

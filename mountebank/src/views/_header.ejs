@@ -1,0 +1,120 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>mountebank - <%= title %></title>
+    <meta charset='utf-8'>
+    <meta name='description' content='<%= description %>' />
+    <meta name='author' content='Brandon Byars' />
+
+    <link rel='stylesheet' href='/stylesheets/jqueryui/1.10.4/themes/smoothness/jquery-ui.css' />
+    <link rel='stylesheet' type='text/css' href='/stylesheets/application.css' />
+    <!--[if IE]>
+    <link rel='stylesheet' type='text/css' href='/stylesheets/ie.css' />
+    <![endif]-->
+
+    <link rel='shortcut icon' href='/images/favicon.ico' type='image/x-icon' />
+
+    <script src='/scripts/jquery/1.11.0/jquery.min.js'></script>
+
+    <% if (heroku) { -%>
+    <script>
+      (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+      (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+      m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+      })(window,document,'script','https://www.google-analytics.com/analytics.js','ga');
+
+      ga('create', 'UA-46250848-1', 'auto');
+      ga('send', 'pageview');
+
+    </script>
+    <script src='/scripts/trackOutgoingLinks.js'></script>
+    <% } -%>
+  </head>
+  <body>
+    <div id='main'>
+      <header>
+        <a href='/'><img src='/images/mountebank.png' alt='mountebank' /></a>
+        <p>mountebank - over the wire test doubles</p>
+
+        <nav class='horizontal'>
+          <ul>
+            <li><a href='/'>home</a></li>
+            <li><a href='/imposters'>imposters</a></li>
+            <li><a href='/logs'>logs</a></li>
+            <li><a href='/config'>config</a></li>
+            <li><a href='/feed' class='feed-icon' title='subscribe for release updates'></a></li>
+            <li>
+              <form method='GET' action='http://www.google.com/search'>
+                <input type='hidden' name='domains' value='www.mbtest.org' />
+                <input type='hidden' name='sitesearch' value='www.mbtest.org' />
+                <input type='search' name='q' results='5' autosave='mb' placeholder='Search...' />
+                <input type='submit' value='Search...' id='searchButton' />
+              </form>
+            </li>
+          </ul>
+        </nav>
+
+        <a href='https://github.com/bbyars/mountebank'>
+          <img style='position: absolute; top: 0; right: 0; border: 0;'
+               src='/images/forkme_right_orange_ff7600.png' alt='Fork me on GitHub'>
+        </a>
+      </header>
+
+      <hr />
+
+      <div id='sidenav'>
+        <h3>the apothecary</h3>
+        <nav class='vertical'>
+          <ul>
+            <li><a href='/docs/gettingStarted'>getting started</a></li>
+            <li><a href='/docs/examples'>examples</a></li>
+            <li><a href='/docs/clientLibraries'>client libraries</a></li>
+            <li><a href='/docs/install'>install options</a></li>
+            <li><a href='/docs/commandLine'>command line</a></li>
+            <li><a href='/docs/security'>security</a></li>
+            <li><a href='/faqs'>faqs</a></li>
+            <li><a href='/support'>support</a></li>
+            <li><a href='/docs/glossary'>glossary</a></li>
+          </ul>
+
+          <p>api:</p>
+          <ul>
+            <li><a href='/docs/api/overview'>overview</a></li>
+            <li><a href='/docs/api/contracts'>contracts</a></li>
+            <li><a href='/docs/api/mocks'>mock verification</a></li>
+            <li><a href='/docs/api/stubs'>stubs</a></li>
+            <li>
+              <ul>
+                <li><a href='/docs/api/proxies'>proxies</a></li>
+                <li><a href='/docs/api/injection'>injection</a></li>
+                <li><a href='/docs/api/behaviors'>behaviors</a></li>
+              </ul>
+            </li>
+            <li><a href='/docs/api/predicates'>stub predicates</a></li>
+            <li>
+              <ul>
+                <li><a href='/docs/api/xpath'>xpath</a></li>
+                <li><a href='/docs/api/json'>json</a></li>
+                <li><a href='/docs/api/jsonpath'>jsonpath</a></li>
+              </ul>
+            </li>
+            <li><a href='/docs/api/errors'>errors</a></li>
+          </ul>
+
+          <p>protocols:</p>
+          <ul>
+            <li><a href='/docs/protocols/http'>http</a></li>
+            <li><a href='/docs/protocols/https'>https</a></li>
+            <li><a href='/docs/protocols/tcp'>tcp</a></li>
+            <li><a href='/docs/protocols/smtp'>smtp</a></li>
+          </ul>
+
+          <p>the book:<br /><br />
+              <a href='https://www.manning.com/books/testing-microservices-with-mountebank'>
+                  <img src='/images/book.png' alt='Testing Microservices with Mountebank' width='130' height='163' />
+              </a>
+          </p>
+        </nav>
+      </div>
+
+      <div id='content'>

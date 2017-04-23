@@ -1,0 +1,231 @@
+<%
+title = 'predicates'
+description = 'The predicates supported by mountebank'
+%>
+
+<% include ../../_header %>
+
+<h1>Predicates</h1>
+
+<p>In the absence of a predicate, a stub always matches, and there's never a reason to
+add more than one stub to an imposter.  Predicates allow imposters to have much richer
+behavior by defining whether or not a stub matches a request.  When multiple stubs are
+created on an imposter, the first stub that matches is selected.</p>
+
+<p>Each predicate object contains one or more of the request fields as keys.  Predicates
+are added to a stub in an array, and all predicates are AND'd together.  The following
+predicate operators are allowed:</p>
+
+<table>
+  <tr>
+    <th>Operator</th>
+    <th>Description</th>
+  </tr>
+  <tr>
+    <td><code>equals</code></td>
+    <td>The request field matches the predicate</td>
+  </tr>
+  <tr>
+    <td><code>deepEquals</code></td>
+    <td>Performs nested set equality on the request field, useful when
+    the request field is an object (e.g. the <code>query</code> field in http)</td>
+  </tr>
+  <tr>
+    <td><code>contains</code></td>
+    <td>The request field contains the predicate</td>
+  </tr>
+  <tr>
+    <td><code>startsWith</code></td>
+    <td>The request field starts with the predicate</td>
+  </tr>
+  <tr>
+    <td><code>endsWith</code></td>
+    <td>The request field ends with the predicate</td>
+  </tr>
+  <tr>
+    <td><code>matches</code></td>
+    <td>The request field matches the JavaScript regular expression defined
+    with the predicate.</td>
+  </tr>
+  <tr>
+    <td><code>exists</code></td>
+    <td>If <code>true</code>, the request field must exist.  If <code>false</code>,
+    the request field must not exist.</td>
+  </tr>
+  <tr>
+    <td><code>not</code></td>
+    <td>Inverts a predicate</td>
+  </tr>
+  <tr>
+    <td><code>or</code></td>
+    <td>Logically or's two predicates together</td>
+  </tr>
+  <tr>
+    <td><code>and</code></td>
+    <td>Logically and's two predicates together</td>
+  </tr>
+  <tr>
+    <td><code>inject</code></td>
+    <td>Injects JavaScript to decide whether the request matches or not.
+    See the <a href='/docs/api/injection'>injection</a> page for more details.</td>
+  </tr>
+</table>
+
+<p>Predicates can be parameterized.  mountebank accepts the following
+predicate parameters:</p>
+
+<table>
+  <tr>
+    <th>Parameter</th>
+    <th>Default</th>
+    <th>Description</th>
+  </tr>
+  <tr>
+    <td><code>caseSensitive</code></td>
+    <td><code>false</code></td>
+    <td>Determines if the match is case sensitive or not.  This includes keys
+    for objects such as query parameters.</td>
+  </tr>
+  <tr>
+    <td><code>except</code></td>
+    <td><code>""</code></td>
+    <td>Defines a regular expression that is stripped out of the request field
+    before matching.</td>
+  </tr>
+  <tr>
+    <td><code>xpath</code></td>
+    <td><code>null</code></td>
+    <td>Defines an object containing a <code>selector</code> string and, optionally, an
+    <code>ns</code> object field that defines a namespace map.</td>
+  </tr>
+  <tr>
+    <td><code>jsonpath</code></td>
+    <td><code>null</code></td>
+    <td>Defines an object containing a <code>selector</code> string</td>
+  </tr>
+</table>
+
+<p>See the <code>equals</code> example below to see the <code>caseSensitive</code> and
+<code>except</code> parameters in action.  See the <a href='/docs/api/xpath'>xpath page</a>
+for <code>xpath</code> examples. See the <a href='/docs/api/jsonpath'>jsonpath page</a>
+  or <code>jsonpath</code> examples. </p>
+
+<p>Almost all predicates are scoped to a request field; see the protocol pages linked to from
+the sidebar to see the request fields.  <code>inject</code> is the sole exception.  It takes
+a string function that accepts the entire request.  See the
+<a href='/docs/api/injection'>injection</a> page for details.</p>
+
+<p>The predicates work intuitively for base64-encoded binary data as well by internally
+converting the base64-encoded string to a JSON string representing the byte array.  For example,
+sending "AQIDBA==" will get translated to "[1,2,3,4]", and predicates expecting "AgM=" will
+get translated to "[2,3]".  Even though "AQIDBA==" does not contain "AgM=", a <code>contains</code>
+predicate will match, because "[1,2,3,4]" does contain "[2,3]".  This works well for everything
+but <code>matches</code>, because any regular expression operators get encoded as binary.
+mountebank recommends that you stay away from <code>matches</code> if you're dealing in binary.
+In mountebank's experience, <code>contains</code> is the most useful predicate for binary
+imposters, as even binary RPC data generally contains strings representing method names.</p>
+
+<p>On occasion you may encounter multi-valued keys.  This can be the case with querystrings
+that have repeating keys, for example <code>?key=first&amp;key=second</code>.  In those cases,
+<code>deepEquals</code> will require all the values (in any order) to match.  All other
+predicates will match if any value matches, so an <code>equals</code> predicate
+will match with the value of <code>second</code> in the example above.</p>
+
+<h2>Matching XML or JSON</h2>
+
+<p>mountebank has special support for matching XML and JSON request fields, such as in an <code>http body</code>
+or <code>tcp data</code> field.  Where XML or JSON predicates are used against <code>string</code> fields,
+mountebank will attempt to parse the field as XML or JSON and apply the given predicate.  If he is unable to
+parse the field, the predicate will fail; otherwise it will pass or fail according to the selected value.</p>
+
+<p>See the <a href='/docs/api/xpath'>xpath page</a> for <code>xpath</code> examples.</p>
+<p>See the <a href='/docs/api/json'>json page</a> for <code>json</code> examples.</p>
+
+<h2>Examples</h2>
+
+<p>The examples below use both HTTP and TCP imposters.  The TCP examples use netcat (<code>nc</code>)
+to send TCP data over a socket, which is like <code>telnet</code>, but makes the output easier to script.
+The examples for binary imposters use the <code>base64</code> command line tool to decode base64
+to binary before sending to the socket.</p>
+
+<section class="accordion">
+  <div>
+    <input id="predicates-equals" name="predicates-equals" type="checkbox" />
+      <label for="predicates-equals">equals</label>
+      <section>
+        <% include predicates/equals %>
+      </section>
+  </div>
+  <div>
+    <input id="predicates-deepEquals" name="predicates-deepEquals" type="checkbox" />
+    <label for="predicates-deepEquals">deepEquals</label>
+    <section>
+      <% include predicates/deepEquals %>
+    </section>
+  </div>
+  <div>
+    <input id="predicates-contains" name="predicates-contains" type="checkbox" />
+      <label for="predicates-contains">contains</label>
+      <section>
+        <% include predicates/contains %>
+      </section>
+  </div>
+  <div>
+    <input id="predicates-startsWith" name="predicates-startsWith" type="checkbox" />
+    <label for="predicates-startsWith">startsWith</label>
+    <section>
+      <% include predicates/startsWith %>
+    </section>
+  </div>
+  <div>
+    <input id="predicates-endsWith" name="predicates-endsWith" type="checkbox" />
+    <label for="predicates-endsWith">endsWith</label>
+    <section>
+      <% include predicates/endsWith %>
+    </section>
+  </div>
+  <div>
+    <input id="predicates-matches" name="predicates-matches" type="checkbox" />
+    <label for="predicates-matches">matches</label>
+    <section>
+      <% include predicates/matches %>
+    </section>
+  </div>
+  <div>
+    <input id="predicates-exists" name="predicates-exists" type="checkbox" />
+    <label for="predicates-exists">exists</label>
+    <section>
+      <% include predicates/exists %>
+    </section>
+  </div>
+  <div>
+    <input id="predicates-not" name="predicates-not" type="checkbox" />
+    <label for="predicates-not">not</label>
+    <section>
+      <% include predicates/not %>
+    </section>
+  </div>
+  <div>
+    <input id="predicates-or" name="predicates-or" type="checkbox" />
+    <label for="predicates-or">or</label>
+    <section>
+      <% include predicates/or %>
+    </section>
+  </div>
+  <div>
+    <input id="predicates-and" name="predicates-and" type="checkbox" />
+    <label for="predicates-and">and</label>
+    <section>
+      <% include predicates/and %>
+    </section>
+  </div>
+  <div>
+    <input id="predicates-inject" name="predicates-inject" type="checkbox" />
+    <label for="predicates-inject">inject</label>
+    <section>
+      <% include predicates/inject %>
+    </section>
+  </div>
+</section>
+
+<% include ../../_footer %>
