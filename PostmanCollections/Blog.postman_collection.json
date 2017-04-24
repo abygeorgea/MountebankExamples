@@ -1,0 +1,115 @@
+{
+	"id": "7577b890-fb3f-c05d-cf4b-a8372003a702",
+	"name": "Blog",
+	"description": "",
+	"order": [],
+	"folders": [
+		{
+			"id": "82a8d7b2-e377-fda5-ce07-999e8b1adf91",
+			"name": "FirstExample",
+			"description": "",
+			"order": [
+				"10184531-e210-7869-4222-7b3afd474c36",
+				"b860ecbe-627c-30d9-b9e4-e9d9eed36cc1"
+			],
+			"owner": 0
+		},
+		{
+			"id": "ac9c7637-564a-b8df-eacc-6b748335c9d2",
+			"name": "SecondExample",
+			"description": "",
+			"order": [
+				"3ca1f7a3-f163-9f7a-d220-9fa2f9fe55c4",
+				"b716576b-c045-1205-194b-320d8ab379c1"
+			],
+			"owner": 0
+		}
+	],
+	"timestamp": 1492977966186,
+	"owner": 0,
+	"public": false,
+	"requests": [
+		{
+			"id": "10184531-e210-7869-4222-7b3afd474c36",
+			"headers": "",
+			"url": "http://localhost:4547/Apitesting/v1/test?type=ResponseTwo",
+			"preRequestScript": null,
+			"pathVariables": {},
+			"method": "POST",
+			"data": [],
+			"dataMode": "raw",
+			"version": 2,
+			"tests": null,
+			"currentHelper": "normal",
+			"helperAttributes": {},
+			"time": 1493017072461,
+			"name": "ResponseTwo",
+			"description": "",
+			"collectionId": "7577b890-fb3f-c05d-cf4b-a8372003a702",
+			"responses": [],
+			"rawModeData": "{ \n  \"email\": \"sddfsdf@fsdf.com\",\n  \"password\" : \"dfsdfsdf\"\n  }"
+		},
+		{
+			"id": "3ca1f7a3-f163-9f7a-d220-9fa2f9fe55c4",
+			"headers": "",
+			"url": "http://localhost:4547/Blog.Api/3123/CustomerView",
+			"preRequestScript": null,
+			"pathVariables": {},
+			"method": "GET",
+			"data": [],
+			"dataMode": "raw",
+			"version": 2,
+			"tests": null,
+			"currentHelper": "normal",
+			"helperAttributes": {},
+			"time": 1493017228944,
+			"name": "CustomerFound",
+			"description": "",
+			"collectionId": "7577b890-fb3f-c05d-cf4b-a8372003a702",
+			"responses": [],
+			"rawModeData": "{ \n  \"username\": \"sdfsdf\",\n  \"password\" : \"dfsdfsdf\"\n  }"
+		},
+		{
+			"id": "b716576b-c045-1205-194b-320d8ab379c1",
+			"headers": "",
+			"url": "http://localhost:4547/Blog.Api/19123/CustomerView",
+			"preRequestScript": null,
+			"pathVariables": {},
+			"method": "GET",
+			"data": [],
+			"dataMode": "raw",
+			"version": 2,
+			"tests": null,
+			"currentHelper": "normal",
+			"helperAttributes": {},
+			"time": 1493017223469,
+			"name": "CustomerNotFound",
+			"description": "",
+			"collectionId": "7577b890-fb3f-c05d-cf4b-a8372003a702",
+			"responses": [],
+			"rawModeData": "{ \n  \"username\": \"sdfsdf\",\n  \"password\" : \"dfsdfsdf\"\n  }"
+		},
+		{
+			"id": "b860ecbe-627c-30d9-b9e4-e9d9eed36cc1",
+			"headers": "",
+			"url": "http://localhost:4547/Apitesting/v1/test?type=ResponseOne",
+			"pathVariables": {},
+			"preRequestScript": null,
+			"method": "POST",
+			"collectionId": "7577b890-fb3f-c05d-cf4b-a8372003a702",
+			"data": [],
+			"dataMode": "raw",
+			"name": "ResponseOne",
+			"description": "",
+			"descriptionFormat": "html",
+			"time": 1493012496474,
+			"version": 2,
+			"responses": [],
+			"tests": null,
+			"currentHelper": "normal",
+			"helperAttributes": {},
+			"folder": "82a8d7b2-e377-fda5-ce07-999e8b1adf91",
+			"rawModeData": "{ \n  \"username\": \"sdfsdf\",\n  \"password\" : \"dfsdfsdf\"\n  }"
+		}
+	]
+}
