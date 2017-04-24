@@ -1,0 +1,12 @@
+{
+"status": "success",
+"code": 0,
+"message": "",
+"data":
+{
+"customerID": "123",
+"firstName": "John",
+"lastName": "Citizen",
+"email": "John.Citizen@abcabacas.com"
+}
+}

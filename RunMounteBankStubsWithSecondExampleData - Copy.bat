@@ -1,0 +1,1 @@
+mb --configfile SecondExample/Imposter.ejs --allowInjection

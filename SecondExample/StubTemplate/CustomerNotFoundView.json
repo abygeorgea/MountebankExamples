@@ -1,0 +1,5 @@
+{
+"status": "fail",
+"code": "CUSTOMER_NOT_FOUND",
+"message": "Customer details not found."
+}
