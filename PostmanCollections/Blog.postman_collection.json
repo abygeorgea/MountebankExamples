@@ -15,6 +15,16 @@
 			"owner": 0
 		},
 		{
+			"id": "e0be8aff-4eb3-050d-2549-46114bf31b17",
+			"name": "SOAP-XMLStubExample",
+			"description": "",
+			"order": [
+				"d96c6cbd-05b0-c23f-ef3d-5f087137127c",
+				"5bd3b734-7a6d-f0ab-e2aa-8aee369fe9e6"
+			],
+			"owner": 0
+		},
+		{
 			"id": "ac9c7637-564a-b8df-eacc-6b748335c9d2",
 			"name": "SecondExample",
 			"description": "",
@@ -62,12 +72,32 @@
 			"tests": null,
 			"currentHelper": "normal",
 			"helperAttributes": {},
-			"time": 1493017228944,
+			"time": 1493252790116,
 			"name": "CustomerFound",
 			"description": "",
 			"collectionId": "7577b890-fb3f-c05d-cf4b-a8372003a702",
 			"responses": [],
 			"rawModeData": "{ \n  \"username\": \"sdfsdf\",\n  \"password\" : \"dfsdfsdf\"\n  }"
+		},
+		{
+			"id": "5bd3b734-7a6d-f0ab-e2aa-8aee369fe9e6",
+			"headers": "",
+			"url": "http://localhost:4547/Blog.Api/XMLexamplePOST/123",
+			"preRequestScript": null,
+			"pathVariables": {},
+			"method": "POST",
+			"data": [],
+			"dataMode": "raw",
+			"version": 2,
+			"tests": null,
+			"currentHelper": "normal",
+			"helperAttributes": {},
+			"time": 1493253814283,
+			"name": "POSTExample",
+			"description": "",
+			"collectionId": "7577b890-fb3f-c05d-cf4b-a8372003a702",
+			"responses": [],
+			"rawModeData": "<Action>Insert</Action><Record>Customer1</Record>"
 		},
 		{
 			"id": "b716576b-c045-1205-194b-320d8ab379c1",
@@ -109,6 +139,28 @@
 			"currentHelper": "normal",
 			"helperAttributes": {},
 			"folder": "82a8d7b2-e377-fda5-ce07-999e8b1adf91",
+			"rawModeData": "{ \n  \"username\": \"sdfsdf\",\n  \"password\" : \"dfsdfsdf\"\n  }"
+		},
+		{
+			"id": "d96c6cbd-05b0-c23f-ef3d-5f087137127c",
+			"headers": "",
+			"url": "http://localhost:4547/Blog.Api/3123/CustomerView",
+			"pathVariables": {},
+			"preRequestScript": null,
+			"method": "GET",
+			"collectionId": "7577b890-fb3f-c05d-cf4b-a8372003a702",
+			"data": [],
+			"dataMode": "raw",
+			"name": "GETExample",
+			"description": "",
+			"descriptionFormat": "html",
+			"time": 1493252808977,
+			"version": 2,
+			"responses": [],
+			"tests": null,
+			"currentHelper": "normal",
+			"helperAttributes": {},
+			"folder": "e0be8aff-4eb3-050d-2549-46114bf31b17",
 			"rawModeData": "{ \n  \"username\": \"sdfsdf\",\n  \"password\" : \"dfsdfsdf\"\n  }"
 		}
 	]
