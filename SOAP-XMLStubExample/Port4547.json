@@ -1,0 +1,12 @@
+{
+"port": 4547,
+"protocol": "http",
+"stubs": [
+{
+<% include XMLStubGET.json %>
+},
+{
+<% include XMLStubPOST.json %>
+}
+]
+}

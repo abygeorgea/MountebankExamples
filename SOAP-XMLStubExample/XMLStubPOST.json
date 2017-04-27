@@ -1,0 +1,14 @@
+"responses": [
+{
+"inject": "<%-stringify(filename, 'ResponseInjection\\GetXMLStub-POST.js') %>"
+}
+],
+"predicates": [
+{
+"matches": {
+"body" : "<Action>Insert</Action><Record>Customer1</Record>",
+"method" : "POST",
+"path" : "/Blog.Api/XMLexamplePOST/[0-9]+"
+}
+}
+]
