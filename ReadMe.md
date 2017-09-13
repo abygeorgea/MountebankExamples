@@ -5,7 +5,7 @@ Examples are basic one intended for beginners. mbtest.org have detailed document
 
 
 ### 1. Basic Rest API stubs ###
-Blog Post link: [http://abygeorgea.com/2017/03/03/mountebank-your-first-service-virtualisation/](http://abygeorgea.com/2017/03/03/mountebank-your-first-service-virtualisation/).
+Blog Post link: [http://abygeorgea.com/2017/03/03/mountebank-your-first-service-virtualisation/](http://abygeorgea.com/blog/2017/03/03/mountebank-your-first-service-virtualisation/).
 
 **Steps to follow**
 
@@ -14,7 +14,7 @@ Blog Post link: [http://abygeorgea.com/2017/03/03/mountebank-your-first-service-
 * Trigger Postman collection for First example
 
 ### 2. Injections and modifying response based on input for Rest API ###
-Blog Post link: [Part1](http://abygeorgea.com/2017/04/07/mountebank-creating-a-response-based-on-a-file-template-and-modifying-it-based-on-request-part-1/) and [part2](http://abygeorgea.com/2017/04/07/mountebank-creating-a-response-based-on-a-file-template-and-modifying-it-based-on-request-part-2/) 
+Blog Post link: [Part1](http://abygeorgea.com/blog/2017/04/07/mountebank-creating-a-response-based-on-a-file-template-and-modifying-it-based-on-request-part-1/) and [part2](http://abygeorgea.com/blog/2017/04/07/mountebank-creating-a-response-based-on-a-file-template-and-modifying-it-based-on-request-part-2/) 
 
 **Steps to follow**
 
@@ -24,7 +24,7 @@ Blog Post link: [Part1](http://abygeorgea.com/2017/04/07/mountebank-creating-a-r
 
 ### 3. XML responses in Mountebank ###
 
-Blog Post link: : [XML response](http://abygeorgea.com/2017/04/27/stubbing-soap-services-xml-using-mountebank/)
+Blog Post link: : [XML response](http://abygeorgea.com/blog/2017/04/27/stubbing-soap-services-xml-using-mountebank/)
 
 **Steps to follow**
 
