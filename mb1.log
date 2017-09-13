@@ -1,6 +1,0 @@
-{"level":"info","message":"[mb:2525] mountebank v1.10.0 now taking orders - point your browser to http://localhost:2525 for help","timestamp":"2017-04-23T20:12:11.205Z"}
-{"level":"info","message":"[mb:2525] PUT /imposters","timestamp":"2017-04-23T20:12:11.256Z"}
-{"level":"info","message":"[http:4547] Open for business...","timestamp":"2017-04-23T20:12:11.305Z"}
-{"level":"info","message":"[http:4547] ::1:2817 => POST /Apitesting/v1/test?type=ResponseTwo","timestamp":"2017-04-23T20:12:44.076Z"}
-{"level":"error","message":"[http:4547] ::1:2819 transmission error X=> {\"code\":\"ECONNRESET\",\"errno\":\"ECONNRESET\",\"syscall\":\"read\"}","timestamp":"2017-04-23T20:12:44.105Z"}
-{"level":"info","message":"[mb:2525] Adios - see you soon?","timestamp":"2017-04-23T20:12:49.240Z"}

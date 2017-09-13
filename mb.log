@@ -1,5 +1,0 @@
-{"level":"info","message":"[mb:2525] mountebank v1.10.0 now taking orders - point your browser to http://localhost:2525 for help","timestamp":"2017-04-23T20:12:56.388Z"}
-{"level":"info","message":"[mb:2525] PUT /imposters","timestamp":"2017-04-23T20:12:56.429Z"}
-{"level":"info","message":"[http:4547] Open for business...","timestamp":"2017-04-23T20:12:56.471Z"}
-{"level":"info","message":"[http:4547] ::1:2827 => POST /Apitesting/v1/test?type=ResponseTwo","timestamp":"2017-04-23T20:13:12.812Z"}
-{"level":"info","message":"[http:4547] ::1:2832 => POST /Apitesting/v1/test?type=ResponseOne","timestamp":"2017-04-23T20:13:16.020Z"}
