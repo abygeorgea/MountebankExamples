@@ -1,0 +1,1 @@
+mb --configfile ExamplesForWait/Imposter.ejs --allowInjection
